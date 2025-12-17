@@ -3,7 +3,10 @@ name: Mirror to GitLab
 on:
   push:
     branches:
-      - main # Falls dein Branch 'master' heißt, hier anpassen!
+      - master  # ← Geändert von 'main' zu 'master'
+      - '**'    # Optional: Alle Branches spiegeln
+  delete:         # Auch gelöschte Branches/Tags spiegeln
+  create:         # Auch neue Branches/Tags spiegeln
 
 jobs:
   mirror:
@@ -12,27 +15,26 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: Add Private Key for GitLab
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
-          
+
       - name: Add GitLab Host to known_hosts
         run: |
           mkdir -p ~/.ssh
-          # SSH Konfiguration für deinen speziellen Port
           echo "Host gitlab.mecry.de" >> ~/.ssh/config
           echo "  StrictHostKeyChecking no" >> ~/.ssh/config
           echo "  Port 2222" >> ~/.ssh/config
 
       - name: Push to GitLab Mirror
         run: |
-          # WICHTIG: Port 2222 und das volle SSH-Schema
           GITLAB_URL="ssh://git@gitlab.mecry.de:2222/MecryTv/minecraft-kiqoserverplugins.git"
           
-          git remote add gitlab "$GITLAB_URL"
+          git remote add gitlab "$GITLAB_URL" || true
           
-          # Push von Branches und Tags
-          git push gitlab 'refs/heads/*' 'refs/tags/*' --force
+          # Push alle Branches und Tags
+          git push gitlab --all --force
+          git push gitlab --tags --force
