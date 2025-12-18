@@ -5,5 +5,5 @@ public enum GameState {
     STARTING,
     INGAME,
     ENDING,
-    RESTARTING
+    RESTART
 }
