@@ -1,6 +1,8 @@
 package de.mecrytv.legacy.bedWars.Countdown;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 
 public class LobbyCountdown extends Countdown{
     /**
@@ -35,16 +37,28 @@ public class LobbyCountdown extends Countdown{
         if (Bukkit.getOnlinePlayers().size() >= 1) {
             int remaining = this.getRemainingSeconds();
 
-            if (remaining == 30 || remaining == 15 || remaining == 10 || remaining <= 5) {
+            if (remaining == 30 || remaining == 15 || remaining == 10 || remaining == 5 || remaining <= 3) {
                 Bukkit.broadcastMessage("Das Spiel startet in " + remaining + " Sekunden!");
+
+                for (Player players : Bukkit.getOnlinePlayers()) {
+                    players.playSound(players.getLocation(), Sound.NOTE_PLING, 1.0f, 1.0f);
+
+                    if (remaining <= 3) {
+                        players.playSound(players.getLocation(), Sound.NOTE_BASS_DRUM, 1.0f, 0.5f);
+                    }
+                }
             }
 
             Bukkit.getOnlinePlayers().forEach(players -> {
+                if (remaining == 10) {
+                    players.sendTitle("TESTMAP", "§eBUILD TEAM");
+                }
+
                 players.setLevel(getRemainingSeconds());
                 players.setExp((float) getRemainingSeconds() / (float) getStartedSeconds());
             });
         } else {
-            this.setRemainingSeconds(61);
+            this.setRemainingSeconds(31);
         }
     }
 }

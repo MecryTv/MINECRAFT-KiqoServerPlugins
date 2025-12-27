@@ -29,4 +29,7 @@ tasks.withType(JavaCompile) {
 
 shadowJar {
     archiveFileName = "BedWars-Legacy.jar"
+
+    relocate 'co.aikar.commands', 'de.mecrytv.legacy.bedwars.acf'
+    relocate 'co.aikar.locales', 'de.mecrytv.legacy.bedwars.locales'
 }
